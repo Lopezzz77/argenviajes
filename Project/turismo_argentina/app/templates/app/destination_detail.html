@@ -1,0 +1,257 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}{{ destination.name }} - Turismo Argentina{% endblock %}
+
+{% block content %}
+
+<!-- ============================================================
+     ENCABEZADO DEL DESTINO - Imagen de fondo, titulo y puntuacion
+     ============================================================ -->
+<section class="page-hero" style="background-image: url('{{ destination.image|default:'https://source.unsplash.com/1600x600/?argentina' }}');">
+    <div class="hero-overlay"></div>
+    <div class="page-hero-content">
+        <span class="region-badge">{{ destination.province.name }}</span>
+        <h1 class="animate-fadeIn">{{ destination.name }}</h1>
+        <div class="rating-stars animate-fadeInUp">
+            {% for i in "12345" %}
+            <i class="fas fa-star{% if forloop.counter > avg_rating %} star-empty{% endif %}"></i>
+            {% endfor %}
+            <span class="rating-text">{{ avg_rating }} / 5 ({{ reviews|length }} reseñas)</span>
+        </div>
+    </div>
+</section>
+
+<div class="container detail-layout">
+
+    <!-- ============================================================
+         DESCRIPCION DEL LUGAR TURISTICO - Texto informativo
+         ============================================================ -->
+    <section class="detail-section animate-on-scroll">
+        <div class="detail-card">
+            <h2><i class="fas fa-info-circle"></i> Descripción del Destino</h2>
+            <p>{{ destination.description }}</p>
+            <div class="detail-meta">
+                <span><i class="fas fa-dollar-sign"></i> Precio desde: <strong>${{ destination.price_per_night|floatformat:0 }} por noche</strong></span>
+                <span><i class="fas fa-map-pin"></i> <strong>{{ destination.province.name }}, Argentina</strong></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         GALERIA DE IMAGENES - Fotos reales del destino
+         ============================================================ -->
+    {% if destination.images %}
+    <section class="detail-section animate-on-scroll">
+        <div class="detail-card">
+            <h2><i class="fas fa-images"></i> Galería de Imágenes</h2>
+            <div class="gallery-grid">
+                {% for img_url in destination.images %}
+                <div class="gallery-item">
+                    <img src="{{ img_url }}" alt="{{ destination.name }}" loading="lazy">
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- ============================================================
+     UBICACION EN EL MAPA - Mapa interactivo con Leaflet.js
+     ============================================================ -->
+    <section class="detail-section animate-on-scroll">
+        <div class="detail-card">
+            <h2><i class="fas fa-map-marked-alt"></i> Ubicación en el Mapa</h2>
+            <div id="destinationMap" class="map-container"
+                 data-lat="{{ destination.location_lat }}"
+                 data-lng="{{ destination.location_lng }}"
+                 data-name="{{ destination.name }}"
+                 data-province="{{ destination.province.name }}">
+            </div>
+            <p class="map-coords">Coordenadas: {{ destination.location_lat }}, {{ destination.location_lng }}</p>
+        </div>
+    </section>
+
+    <!-- ============================================================
+     COMO LLEGAR - Medios de transporte disponibles
+     ============================================================ -->
+    <section class="detail-section animate-on-scroll">
+        <div class="detail-card">
+            <h2><i class="fas fa-route"></i> Cómo Llegar</h2>
+            <div class="transport-grid">
+                {% if destination.how_to_get.micro %}
+                <div class="transport-item">
+                    <i class="fas fa-bus"></i>
+                    <h4>Micro</h4>
+                    <p>{{ destination.how_to_get.micro }}</p>
+                    <a href="https://www.centraldepasajes.com.ar/" target="_blank" class="transport-btn">Comprar Boleto</a>
+                </div>
+                {% endif %}
+                {% if destination.how_to_get.avion %}
+                <div class="transport-item">
+                    <i class="fas fa-plane"></i>
+                    <h4>Avión</h4>
+                    <p>{{ destination.how_to_get.avion }}</p>
+                    <a href="https://www.aerolineas.com.ar/" target="_blank" class="transport-btn">Comprar Boleto</a>
+                </div>
+                {% endif %}
+                {% if destination.how_to_get.tren %}
+                <div class="transport-item">
+                    <i class="fas fa-train"></i>
+                    <h4>Tren</h4>
+                    <p>{{ destination.how_to_get.tren }}</p>
+                    <a href="https://www.trenesargentinos.gob.ar/" target="_blank" class="transport-btn">Comprar Boleto</a>
+                </div>
+                {% endif %}
+                {% if destination.how_to_get.auto %}
+                <div class="transport-item">
+                    <i class="fas fa-car"></i>
+                    <h4>Auto</h4>
+                    <p>{{ destination.how_to_get.auto }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+     PRECIO SEGUN ESTADIA - Calculadora interactiva
+     ============================================================ -->
+    <section class="detail-section animate-on-scroll">
+        <div class="detail-card">
+            <h2><i class="fas fa-calculator"></i> Calculadora de Estadía</h2>
+            <div class="price-calculator">
+                <div class="calc-group">
+                    <label><i class="fas fa-moon"></i> Noches:</label>
+                    <input type="number" id="nightsInput" value="1" min="1" max="30">
+                </div>
+                <div class="calc-group">
+                    <label><i class="fas fa-users"></i> Personas:</label>
+                    <input type="number" id="peopleInput" value="1" min="1" max="10">
+                </div>
+                <div class="calc-result">
+                    <span>Precio por noche: <strong>${{ destination.price_per_night|floatformat:0 }}</strong></span>
+                    <span>Total estimado: <strong id="totalPrice">${{ destination.price_per_night|floatformat:0 }}</strong></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+     HOTELES MEJOR CALIFICADOS - Listado con puntuacion y reserva
+     ============================================================ -->
+    <section class="detail-section animate-on-scroll">
+        <div class="detail-card">
+            <h2><i class="fas fa-hotel"></i> Hoteles Mejor Calificados</h2>
+            {% if hotels %}
+            <div class="hotels-list">
+                {% for hotel in hotels %}
+                <div class="hotel-item">
+                    <div class="hotel-image">
+                        <img src="{{ hotel.image|default:'https://source.unsplash.com/200x150/?hotel' }}" alt="{{ hotel.name }}">
+                    </div>
+                    <div class="hotel-info">
+                        <h3>{{ hotel.name }}</h3>
+                        <div class="hotel-rating">
+                            {% for i in "12345" %}
+                            <i class="fas fa-star{% if forloop.counter > hotel.rating %} star-empty{% endif %}"></i>
+                            {% endfor %}
+                            <span>{{ hotel.rating }}</span>
+                        </div>
+                        <p>{{ hotel.description|truncatewords:30 }}</p>
+                        <p><i class="fas fa-map-pin"></i> {{ hotel.address }}</p>
+                        {% if hotel.phone %}
+                        <p><i class="fas fa-phone"></i> {{ hotel.phone }}</p>
+                        {% endif %}
+                        <p class="hotel-price"><i class="fas fa-dollar-sign"></i> ${{ hotel.price_per_night|floatformat:0 }} / noche</p>
+                    </div>
+                    <div class="hotel-actions">
+                        {% if hotel.booking_url %}
+                        <a href="{{ hotel.booking_url }}" target="_blank" class="btn btn-primary">
+                            <i class="fas fa-calendar-check"></i> Reservar Ahora
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="empty-message">No hay hoteles registrados para este destino.</p>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- ============================================================
+     SISTEMA DE VALORACION Y COMENTARIOS - Reseñas de usuarios
+     ============================================================ -->
+    <section class="detail-section animate-on-scroll">
+        <div class="detail-card">
+            <h2><i class="fas fa-comments"></i> Reseñas y Valoraciones</h2>
+
+            {% if user.is_authenticated %}
+            <!-- Formulario para dejar reseña (solo usuarios logueados) -->
+            <div class="review-form-container">
+                <h3>Dejá tu reseña</h3>
+                <form method="POST" action="{% url 'add_review' destination.slug %}" class="review-form">
+                    {% csrf_token %}
+                    <div class="star-rating-select">
+                        <label>Tu puntuación:</label>
+                        <div class="stars-input" id="starsInput">
+                            {% for i in "54321" %}
+                            <i class="fas fa-star" data-value="{{ i }}"></i>
+                            {% endfor %}
+                        </div>
+                        <input type="hidden" name="rating" id="ratingValue" value="5">
+                    </div>
+                    <div class="form-group">
+                        <label for="comment">Tu comentario:</label>
+                        <textarea name="comment" id="comment" rows="4" placeholder="Contanos tu experiencia..." required></textarea>
+                    </div>
+                    <button type="submit" class="auth-btn">Publicar Reseña <i class="fas fa-paper-plane"></i></button>
+                </form>
+            </div>
+            {% else %}
+            <div class="review-login-prompt">
+                <p><i class="fas fa-info-circle"></i> <a href="{% url 'login' %}">Iniciá sesión</a> para dejar una reseña.</p>
+            </div>
+            {% endif %}
+
+            <!-- Listado de reseñas existentes -->
+            <div class="reviews-list">
+                {% for review in reviews %}
+                <div class="review-item animate-on-scroll">
+                    <div class="review-header">
+                        <div class="review-user">
+                            <i class="fas fa-user-circle"></i>
+                            <strong>{{ review.user.username }}</strong>
+                        </div>
+                        <div class="review-rating">
+                            {% for i in "12345" %}
+                            <i class="fas fa-star{% if forloop.counter > review.rating %} star-empty{% endif %}"></i>
+                            {% endfor %}
+                        </div>
+                        <span class="review-date">{{ review.created_at|date:"d/m/Y" }}</span>
+                    </div>
+                    <p class="review-comment">{{ review.comment }}</p>
+                </div>
+                {% empty %}
+                <p class="empty-message">No hay reseñas todavía. ¡Sé el primero en comentar!</p>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<!-- Inicializar mapa cuando cargue la pagina -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        initDestinationMap();
+        initPriceCalculator({{ destination.price_per_night|floatformat:0 }});
+        initStarRating();
+    });
+</script>
+{% endblock %}

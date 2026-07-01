@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa de Navegación - Argentina Viajes</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* ============================================================
+           RESET Y VARIABLES - Misma paleta que el proyecto
+           ============================================================ */
+        *, *::before, *::after {
+            margin: 0; padding: 0; box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1a73e8;
+            --primary-dark: #1557b0;
+            --primary-light: #e8f0fe;
+            --secondary: #34a853;
+            --accent: #ea4335;
+            --dark: #1f2937;
+            --darker: #111827;
+            --light: #f3f4f6;
+            --white: #ffffff;
+            --gray: #6b7280;
+            --gray-light: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ============================================================
+           HEADER
+           ============================================================ */
+        .header {
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            color: var(--white);
+            padding: 40px 0 30px;
+            text-align: center;
+            border-bottom: 4px solid var(--primary);
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .header h1 i {
+            color: var(--primary);
+            margin-right: 10px;
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.7);
+            margin-top: 8px;
+            font-size: 1.05rem;
+        }
+
+        .header .badge {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 6px 18px;
+            background: var(--primary);
+            color: var(--white);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* ============================================================
+           SECCIONES
+           ============================================================ */
+        .section {
+            padding: 50px 0;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 2px;
+            background: var(--gray-light);
+            margin-left: 15px;
+        }
+
+        .section-subtitle {
+            color: var(--gray);
+            font-size: 0.95rem;
+            margin-top: -20px;
+            margin-bottom: 30px;
+        }
+
+        /* ============================================================
+           MAPA DE BOTONES / SITEMAP - Diagrama de nodos
+           ============================================================ */
+        .sitemap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            padding: 20px 0;
+        }
+
+        /* Nodo raiz */
+        .sitemap-root {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .sitemap-root .node {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 32px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: var(--radius);
+            box-shadow: 0 6px 20px rgba(26,115,232,0.35);
+            position: relative;
+            z-index: 2;
+        }
+
+        .sitemap-root .node i {
+            font-size: 1.4rem;
+        }
+
+        /* Flecha hacia abajo */
+        .arrow-down {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 6px 0;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .arrow-down .line {
+            width: 2px;
+            height: 25px;
+            background: var(--primary);
+        }
+
+        .arrow-down .fa-chevron-down {
+            margin-top: -8px;
+        }
+
+        /* Nivel 1 - Categorias principales */
+        .sitemap-level-1 {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .sitemap-level-1 .node {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 24px;
+            background: var(--white);
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            font-weight: 600;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            min-width: 140px;
+            justify-content: center;
+        }
+
+        .sitemap-level-1 .node i {
+            font-size: 1rem;
+        }
+
+        .sitemap-level-1 .node:hover {
+            background: var(--primary);
+            color: var(--white);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Flechas de nivel 1 a nivel 2 */
+        .arrow-down-group {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            padding: 4px 0;
+            flex-wrap: wrap;
+        }
+
+        .arrow-down-group .arrow-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--gray);
+            font-size: 0.8rem;
+            min-width: 140px;
+        }
+
+        .arrow-down-group .arrow-item .line {
+            width: 2px;
+            height: 20px;
+            background: var(--gray-light);
+        }
+
+        /* Nivel 2 - Paginas hijas */
+        .sitemap-level-2 {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .sitemap-level-2 .node-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-width: 140px;
+            align-items: center;
+        }
+
+        .sitemap-level-2 .node-group .group-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gray);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .sitemap-level-2 .node {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 18px;
+            background: var(--white);
+            border: 1.5px solid var(--gray-light);
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--dark);
+            transition: var(--transition);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+            width: 100%;
+            justify-content: center;
+        }
+
+        .sitemap-level-2 .node i {
+            font-size: 0.85rem;
+            color: var(--primary);
+        }
+
+        .sitemap-level-2 .node:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .sitemap-level-2 .node.internal {
+            border-left: 3px solid var(--primary);
+        }
+
+        .sitemap-level-2 .node.auth {
+            border-left: 3px solid var(--secondary);
+        }
+
+        .sitemap-level-2 .node.detail {
+            border-left: 3px solid var(--accent);
+        }
+
+        .sitemap-level-2 .node.func {
+            border-left: 3px solid #f59e0b;
+        }
+
+        /* ============================================================
+           MAPA DE FLUJO DE USUARIO - Diagramas de navegacion
+           ============================================================ */
+        .flow-container {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .flow-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .flow-card:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .flow-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .flow-card h3 i {
+            color: var(--primary);
+        }
+
+        .flow-card .flow-desc {
+            color: var(--gray);
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+        }
+
+        /* Diagrama de flujo horizontal */
+        .flow-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            flex-wrap: wrap;
+        }
+
+        .flow-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 14px 18px;
+            background: var(--light);
+            border-radius: var(--radius-sm);
+            min-width: 110px;
+            text-align: center;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .flow-step i {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .flow-step span {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .flow-step .step-num {
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            width: 22px;
+            height: 22px;
+            background: var(--primary);
+            color: var(--white);
+            border-radius: 50%;
+            font-size: 0.7rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .flow-step:hover {
+            background: var(--primary-light);
+            transform: translateY(-3px);
+        }
+
+        .flow-step.primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .flow-step.primary i,
+        .flow-step.primary span {
+            color: var(--white);
+        }
+
+        .flow-step.primary .step-num {
+            background: var(--white);
+            color: var(--primary);
+        }
+
+        .flow-step.secondary {
+            background: var(--secondary);
+            color: var(--white);
+        }
+
+        .flow-step.secondary i,
+        .flow-step.secondary span {
+            color: var(--white);
+        }
+
+        .flow-step.secondary .step-num {
+            background: var(--white);
+            color: var(--secondary);
+        }
+
+        .flow-step.accent {
+            background: var(--accent);
+            color: var(--white);
+        }
+
+        .flow-step.accent i,
+        .flow-step.accent span {
+            color: var(--white);
+        }
+
+        .flow-step.accent .step-num {
+            background: var(--white);
+            color: var(--accent);
+        }
+
+        .flow-step.warning {
+            background: #f59e0b;
+            color: var(--white);
+        }
+
+        .flow-step.warning i,
+        .flow-step.warning span {
+            color: var(--white);
+        }
+
+        .flow-step.warning .step-num {
+            background: var(--white);
+            color: #f59e0b;
+        }
+
+        .flow-step.dark {
+            background: var(--dark);
+            color: var(--white);
+        }
+
+        .flow-step.dark i,
+        .flow-step.dark span {
+            color: var(--white);
+        }
+
+        .flow-step.dark .step-num {
+            background: var(--white);
+            color: var(--dark);
+        }
+
+        /* Flecha entre pasos */
+        .flow-arrow {
+            display: flex;
+            align-items: center;
+            padding: 0 8px;
+            color: var(--gray);
+            font-size: 1.1rem;
+        }
+
+        /* Flecha de retorno / decision */
+        .flow-return {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--gray);
+            font-size: 0.8rem;
+            margin-top: 10px;
+            justify-content: center;
+        }
+
+        .flow-return i {
+            font-size: 0.85rem;
+        }
+
+        .flow-return .label {
+            padding: 2px 10px;
+            background: var(--light);
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Layout de decision */
+        .flow-decision {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+
+        .flow-decision .diamond {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-light);
+            border: 2px solid var(--primary);
+            transform: rotate(45deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+
+        .flow-decision .diamond i {
+            transform: rotate(-45deg);
+            color: var(--primary);
+            font-size: 1.3rem;
+        }
+
+        .flow-decision .decision-branches {
+            display: flex;
+            gap: 20px;
+        }
+
+        .flow-decision .branch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .flow-decision .branch .branch-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 10px;
+        }
+
+        .flow-decision .branch .branch-label.yes {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .flow-decision .branch .branch-label.no {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* ============================================================
+           LEYENDA
+           ============================================================ */
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            padding: 20px;
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-top: 20px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .legend-item .color-box {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        .legend-item .color-box.public { background: var(--primary); }
+        .legend-item .color-box.auth { background: var(--secondary); }
+        .legend-item .color-box.detail { background: var(--accent); }
+        .legend-item .color-box.func { background: #f59e0b; }
+
+        /* ============================================================
+           FOOTER
+           ============================================================ */
+        .footer {
+            background: var(--darker);
+            color: rgba(255,255,255,0.6);
+            text-align: center;
+            padding: 25px 20px;
+            font-size: 0.85rem;
+        }
+
+        .footer strong {
+            color: var(--white);
+        }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.5rem; }
+            .sitemap-level-1 { gap: 15px; }
+            .sitemap-level-1 .node { min-width: 120px; padding: 10px 16px; font-size: 0.85rem; }
+            .sitemap-level-2 { gap: 12px; }
+            .sitemap-level-2 .node-group { min-width: 120px; }
+            .sitemap-level-2 .node { padding: 8px 12px; font-size: 0.78rem; }
+            .flow-step { min-width: 80px; padding: 10px 12px; }
+            .flow-step span { font-size: 0.7rem; }
+            .flow-step i { font-size: 1.2rem; }
+            .flow-arrow { padding: 0 4px; font-size: 0.9rem; }
+            .flow-row { gap: 4px; }
+            .legend { flex-direction: column; align-items: center; }
+            .arrow-down-group { gap: 12px; }
+        }
+
+        @media (max-width: 480px) {
+            .sitemap-level-1 .node { min-width: 100px; padding: 8px 12px; font-size: 0.78rem; }
+            .sitemap-level-2 .node-group { min-width: 100px; }
+            .flow-step { min-width: 65px; padding: 8px 10px; }
+            .flow-step span { font-size: 0.65rem; }
+            .flow-step i { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================
+    HEADER
+    ============================================================ -->
+    <header class="header">
+        <h1><i class="fas fa-map-signs"></i> Mapa de Navegación</h1>
+        <p><strong>Argentina Viajes</strong> &mdash; Plataforma de turismo y reservas</p>
+        <span class="badge"><i class="fas fa-sitemap"></i> Arquitectura del Sistema</span>
+    </header>
+
+    <div class="container">
+
+        <!-- ============================================================
+        SECCION 1: MAPA DE BOTONES (SITEMAP)
+        ============================================================ -->
+        <section class="section">
+            <h2 class="section-title"><i class="fas fa-th-large"></i> Mapa de Botones &mdash; Estructura del Sitio</h2>
+            <p class="section-subtitle">Jerarquía de páginas y relaciones entre secciones</p>
+
+            <div class="sitemap">
+
+                <!-- NODO RAIZ -->
+                <div class="sitemap-root">
+                    <div class="node">
+                        <i class="fas fa-home"></i>
+                        <span>Inicio / Index</span>
+                    </div>
+                </div>
+
+                <!-- FLECHA -->
+                <div class="arrow-down">
+                    <div class="line"></div>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+
+                <!-- NIVEL 1: CATEGORIAS PRINCIPALES -->
+                <div class="sitemap-level-1">
+                    <div class="node"><i class="fas fa-search"></i> Búsqueda</div>
+                    <div class="node"><i class="fas fa-map-marked-alt"></i> Provincias</div>
+                    <div class="node"><i class="fas fa-star"></i> Destacados</div>
+                    <div class="node"><i class="fas fa-user"></i> Usuario</div>
+                </div>
+
+                <!-- FLECHAS A NIVEL 2 -->
+                <div class="arrow-down-group">
+                    <div class="arrow-item"><div class="line"></div></div>
+                    <div class="arrow-item"><div class="line"></div></div>
+                    <div class="arrow-item"><div class="line"></div></div>
+                    <div class="arrow-item"><div class="line"></div></div>
+                </div>
+
+                <!-- NIVEL 2: PAGINAS HIJAS -->
+                <div class="sitemap-level-2">
+                    <!-- Busqueda -->
+                    <div class="node-group">
+                        <span class="group-label">Búsqueda</span>
+                        <div class="node internal"><i class="fas fa-search"></i> /buscar/</div>
+                        <div class="node func"><i class="fas fa-sliders-h"></i> Filtros</div>
+                        <div class="node func"><i class="fas fa-tag"></i> Resultados</div>
+                    </div>
+
+                    <!-- Provincias -->
+                    <div class="node-group">
+                        <span class="group-label">Provincias</span>
+                        <div class="node detail"><i class="fas fa-map-pin"></i> /provincia/{slug}/</div>
+                        <div class="node detail"><i class="fas fa-images"></i> Destinos</div>
+                    </div>
+
+                    <!-- Destacados -->
+                    <div class="node-group">
+                        <span class="group-label">Destacados</span>
+                        <div class="node detail"><i class="fas fa-info-circle"></i> /destino/{slug}/</div>
+                        <div class="node func"><i class="fas fa-hotel"></i> Hoteles</div>
+                        <div class="node func"><i class="fas fa-map-marked-alt"></i> Mapa</div>
+                        <div class="node func"><i class="fas fa-calculator"></i> Calculadora</div>
+                        <div class="node func"><i class="fas fa-route"></i> Cómo Llegar</div>
+                        <div class="node func"><i class="fas fa-star"></i> Reseñas</div>
+                    </div>
+
+                    <!-- Usuario -->
+                    <div class="node-group">
+                        <span class="group-label">Usuario</span>
+                        <div class="node auth"><i class="fas fa-sign-in-alt"></i> /login/</div>
+                        <div class="node auth"><i class="fas fa-user-plus"></i> /registro/</div>
+                        <div class="node auth"><i class="fas fa-sign-out-alt"></i> /logout/</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- LEYENDA -->
+            <div class="legend">
+                <div class="legend-item"><div class="color-box public"></div> Páginas públicas (sin autenticación)</div>
+                <div class="legend-item"><div class="color-box auth"></div> Autenticación (login / registro)</div>
+                <div class="legend-item"><div class="color-box detail"></div> Páginas de detalle (con slug)</div>
+                <div class="legend-item"><div class="color-box func"></div> Componentes / funcionalidades embebidas</div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+        SECCION 2: MAPA DE FLUJO DE USUARIO
+        ============================================================ -->
+        <section class="section">
+            <h2 class="section-title"><i class="fas fa-route"></i> Mapa de Flujo de Usuario</h2>
+            <p class="section-subtitle">Recorridos típicos dentro de la plataforma</p>
+
+            <div class="flow-container">
+
+                <!-- FLUJO 1: NAVEGACION BASICA -->
+                <div class="flow-card">
+                    <h3><i class="fas fa-user"></i> Flujo 1: Navegación Básica (Usuario anónimo)</h3>
+                    <p class="flow-desc">El usuario llega al sitio, explora provincias, busca destinos y ve detalles sin necesidad de registrarse.</p>
+                    <div class="flow-row">
+                        <div class="flow-step primary">
+                            <span class="step-num">1</span>
+                            <i class="fas fa-home"></i>
+                            <span>Inicio</span>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="flow-step">
+                            <span class="step-num">2</span>
+                            <i class="fas fa-map-marked-alt"></i>
+                            <span>Filtro Región</span>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="flow-step">
+                            <span class="step-num">3</span>
+                            <i class="fas fa-building"></i>
+                            <span>Card Provincia</span>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="flow-step">
+                            <span class="step-num">4</span>
+                            <i class="fas fa-images"></i>
+                            <span>Destinos</span>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="flow-step accent">
+                            <span class="step-num">5</span>
+                            <i class="fas fa-info-circle"></i>
+                            <span>Detalle Destino</span>
+                        </div>
+                    </div>
+                    <div class="flow-return">
+                        <i class="fas fa-undo"></i>
+                        <span class="label">Vuelta atrás</span>
+                        <span>Navegación por breadcrumbs / botón volver</span>
+                    </div>
+                </div>
+
+                <!-- FLUJO 2: BUSQUEDA Y FILTROS -->
+                <div class="flow-card">
+                    <h3><i class="fas fa-search"></i> Flujo 2: Búsqueda y Filtros</h3>
+                    <p class="flow-desc">El usuario utiliza el buscador o los filtros avanzados para encontrar un destino específico.</p>
+                    <div class="flow-row">
+                        <div class="flow-step primary">
+                            <span class="step-num">1</span>
+                            <i class="fas fa-home"></i>
+                            <span>Inicio</span>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="flow-step">
+                            <span class="step-num">2</span>
+                            <i class="fas fa-search"></i>
+                            <span>Buscar destino</span>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="flow-step">
+                            <span class="step-num">3</span>
+                            <i class="fas fa-sliders-h"></i>
+                            <span>Aplicar filtros</span>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="flow-step secondary">
+                            <span class="step-num">4</span>
+                            <i class="fas fa-list"></i>
+                            <span>Resultados</span>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="flow-step accent">
+                            <span class="step-num">5</span>
+                            <i class="fas fa-info-circle"></i>
+                            <span>Ver detalle</span>
+                        </div>
+                    </div>
+                    <div class="flow-return">
+                        <i class="fas fa-sync-alt"></i>
+                        <span class="label">Refinar</span>
+                        <span>El usuario puede ajustar filtros y buscar de nuevo</span>
+                    </div>
+                </div>
+
+                <!-- FLUJO 3: REGISTRO Y RESEÑA -->
+                <div class="flow-card">
+                    <h3><i class="fas fa-pen"></i> Flujo 3: Registro y Publicación de Reseña</h3>
+                    <p class="flow-desc">El usuario anónimo ve un destino, decide registrarse para dejar una reseña, la publica y vuelve al detalle.</p>
+                    <div class="flow-row">
+                        <div class="flow-step accent">
+                            <span class="step-num">1</span>
+                            <i class="fas fa-info-circle"></i>
+                            <span>Detalle destino</span>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="flow-step">
+                            <span class="step-num">2</span>
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>Click "Iniciar"</span>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="flow-step warning">
+                            <span class="step-num">3</span>
+                            <i class="fas fa-question-circle"></i>
+                            <span>¿Tiene cuenta?</span>
+                        </div>
+                    </div>
+
+                    <!-- Decision -->
+                    <div class="flow-decision">
+                        <div class="decision-branches">
+                            <div class="branch">
+                                <div class="flow-step secondary" style="min-width:100px;">
+                                    <i class="fas fa-check"></i>
+                                    <span>Sí → Login</span>
+                                </div>
+                                <div class="branch-label yes">SÍ</div>
+                            </div>
+                            <div class="flow-arrow"><i class="fas fa-arrow-down"></i></div>
+                            <div class="branch">
+                                <div class="flow-step dark" style="min-width:100px;">
+                                    <i class="fas fa-user-plus"></i>
+                                    <span>No → Registro</span>
+                                </div>
+                                <div class="branch-label no">NO</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flow-row">
+                        <div class="flow-step secondary">
+                            <span class="step-num">4</span>
+                            <i class="fas fa-check-circle"></i>
+                            <span>Autenticado</span>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="flow-step">
+                            <span class="step-num">5</span>
+                            <i class="fas fa-star"></i>
+                            <span>Elegir puntuación</span>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="flow-step">
+                            <span class="step-num">6</span>
+                            <i class="fas fa-comment"></i>
+                            <span>Escribir reseña</span>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="flow-step primary">
+                            <span class="step-num">7</span>
+                            <i class="fas fa-paper-plane"></i>
+                            <span>Publicar</span>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="flow-step accent">
+                            <span class="step-num">8</span>
+                            <i class="fas fa-undo"></i>
+                            <span>Vuelve al detalle</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FLUJO 4: RESERVA DE HOTEL -->
+                <div class="flow-card">
+                    <h3><i class="fas fa-hotel"></i> Flujo 4: Explorar Hoteles y Reservar</h3>
+                    <p class="flow-desc">Dentro del detalle de un destino, el usuario consulta hoteles, calcula el costo y es redirigido a reservar.</p>
+                    <div class="flow-row">
+                        <div class="flow-step accent">
+                            <span class="step-num">1</span>
+                            <i class="fas fa-info-circle"></i>
+                            <span>Detalle destino</span>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="flow-step">
+                            <span class="step-num">2</span>
+                            <i class="fas fa-hotel"></i>
+                            <span>Ver hoteles</span>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="flow-step">
+                            <span class="step-num">3</span>
+                            <i class="fas fa-calculator"></i>
+                            <span>Calcular estadía</span>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="flow-step warning">
+                            <span class="step-num">4</span>
+                            <i class="fas fa-check-circle"></i>
+                            <span>Elegir hotel</span>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="flow-step secondary">
+                            <span class="step-num">5</span>
+                            <i class="fas fa-external-link-alt"></i>
+                            <span>Reservar (link externo)</span>
+                        </div>
+                    </div>
+                    <div class="flow-return">
+                        <i class="fas fa-external-link-alt"></i>
+                        <span class="label">Redirección</span>
+                        <span>El botón "Reservar Ahora" abre el sitio del hotel en una nueva pestaña</span>
+                    </div>
+                </div>
+
+                <!-- FLUJO 5: COMO LLEGAR Y TRANSPORTE -->
+                <div class="flow-card">
+                    <h3><i class="fas fa-route"></i> Flujo 5: Cómo Llegar y Compra de Pasajes</h3>
+                    <p class="flow-desc">El usuario consulta los medios de transporte disponibles y es redirigido a comprar pasajes.</p>
+                    <div class="flow-row">
+                        <div class="flow-step accent">
+                            <span class="step-num">1</span>
+                            <i class="fas fa-info-circle"></i>
+                            <span>Detalle destino</span>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="flow-step">
+                            <span class="step-num">2</span>
+                            <i class="fas fa-route"></i>
+                            <span>Cómo llegar</span>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="flow-step">
+                            <span class="step-num">3</span>
+                            <i class="fas fa-bus"></i>
+                            <span>Micro / Avión / Tren</span>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="flow-step secondary">
+                            <span class="step-num">4</span>
+                            <i class="fas fa-external-link-alt"></i>
+                            <span>Comprar boleto</span>
+                        </div>
+                    </div>
+                    <div class="flow-return">
+                        <i class="fas fa-info-circle"></i>
+                        <span class="label">Info</span>
+                        <span>Cada medio de transporte tiene su propio botón y URL de compra</span>
+                    </div>
+                </div>
+
+                <!-- FLUJO 6: MAPA INTERACTIVO -->
+                <div class="flow-card">
+                    <h3><i class="fas fa-map-marked-alt"></i> Flujo 6: Exploración del Mapa</h3>
+                    <p class="flow-desc">El usuario ve la ubicación exacta en el mapa Leaflet, puede interactuar con marcadores y hacer zoom.</p>
+                    <div class="flow-row">
+                        <div class="flow-step accent">
+                            <span class="step-num">1</span>
+                            <i class="fas fa-info-circle"></i>
+                            <span>Detalle destino</span>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="flow-step">
+                            <span class="step-num">2</span>
+                            <i class="fas fa-map-marked-alt"></i>
+                            <span>Sección mapa</span>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="flow-step primary">
+                            <span class="step-num">3</span>
+                            <i class="fas fa-map-pin"></i>
+                            <span>Ver marcador</span>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="flow-step">
+                            <span class="step-num">4</span>
+                            <i class="fas fa-search-plus"></i>
+                            <span>Zoom / Interacción</span>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="flow-step">
+                            <span class="step-num">5</span>
+                            <i class="fas fa-info"></i>
+                            <span>Popup con info</span>
+                        </div>
+                    </div>
+                    <div class="flow-return">
+                        <i class="fas fa-globe"></i>
+                        <span class="label">OpenStreetMap</span>
+                        <span>Mapa interactivo con Leaflet.js, sin necesidad de API key</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ============================================================
+        SECCION 3: CONVENCIONES
+        ============================================================ -->
+        <section class="section">
+            <h2 class="section-title"><i class="fas fa-paint-brush"></i> Convenciones Visuales</h2>
+
+            <div class="flow-card">
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;">
+                    <div style="text-align:center;padding:20px;background:var(--light);border-radius:var(--radius-sm);">
+                        <div style="width:50px;height:50px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;color:white;font-weight:700;">1</div>
+                        <strong>Paso numerado</strong>
+                        <p style="font-size:0.8rem;color:var(--gray);margin-top:4px;">Secuencia del flujo</p>
+                    </div>
+                    <div style="text-align:center;padding:20px;background:var(--light);border-radius:var(--radius-sm);">
+                        <div style="font-size:1.5rem;color:var(--primary);margin-bottom:6px;"><i class="fas fa-arrow-right"></i></div>
+                        <strong>Flecha</strong>
+                        <p style="font-size:0.8rem;color:var(--gray);margin-top:4px;">Transición entre pantallas</p>
+                    </div>
+                    <div style="text-align:center;padding:20px;background:var(--light);border-radius:var(--radius-sm);">
+                        <div style="font-size:1.2rem;color:var(--gray);margin-bottom:6px;"><i class="fas fa-undo"></i></div>
+                        <strong>Línea de retorno</strong>
+                        <p style="font-size:0.8rem;color:var(--gray);margin-top:4px;">Acción de retroceder o repetir</p>
+                    </div>
+                    <div style="text-align:center;padding:20px;background:var(--light);border-radius:var(--radius-sm);">
+                        <div style="font-size:1.2rem;color:var(--warning,#f59e0b);margin-bottom:6px;"><i class="fas fa-question-circle"></i></div>
+                        <strong>Decisión</strong>
+                        <p style="font-size:0.8rem;color:var(--gray);margin-top:4px;">Punto de bifurcación SÍ / NO</p>
+                    </div>
+                    <div style="text-align:center;padding:20px;background:var(--light);border-radius:var(--radius-sm);">
+                        <div style="font-size:1.2rem;color:var(--secondary);margin-bottom:6px;"><i class="fas fa-external-link-alt"></i></div>
+                        <strong>Redirección externa</strong>
+                        <p style="font-size:0.8rem;color:var(--gray);margin-top:4px;">Abre en nueva pestaña</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- ============================================================
+    FOOTER
+    ============================================================ -->
+    <footer class="footer">
+        <p><strong>Argentina Viajes</strong> &mdash; Documentación de Arquitectura &middot; Diagrama de navegación v1.0</p>
+        <p style="margin-top:4px;font-size:0.78rem;">Basado en el proyecto Django + Python de turismo argentino</p>
+    </footer>
+
+</body>
+</html>

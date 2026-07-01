@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Argentina Viajes{% endblock %}</title>
+    <!-- ============================================================
+         CSS PRINCIPAL: Estilos globales, animaciones, efectos hover
+         ============================================================ -->
+    <link rel="stylesheet" href="{% static 'app/css/styles.css' %}">
+    <!-- Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Leaflet.js para mapas interactivos -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+
+    <!-- ============================================================
+    BARRA DE NAVEGACION - Menu principal con logo, enlaces y sesion
+    ============================================================ -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{% url 'index' %}" class="nav-logo">
+                <img src="{% static 'app/images/logo.png' %}" alt="" class="nav-logo-img">
+                <span class="nav-logo-text">Argentina Viajes</span>
+            </a>
+            <button class="nav-toggle" id="navToggle" aria-label="Abrir menú">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="{% url 'index' %}" class="nav-link"><i class="fas fa-home"></i> Inicio</a></li>
+                <li class="nav-dropdown">
+                    <a href="#" class="nav-link"><i class="fas fa-map-marked-alt"></i> Provincias <i class="fas fa-chevron-down"></i></a>
+                    <ul class="dropdown-menu">
+                        {% for p in provinces %}
+                        <li><a href="{% url 'province_detail' p.slug %}">{{ p.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'logout' %}" class="nav-link"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+                <li class="nav-user"><i class="fas fa-user-circle"></i> {{ user.username }}</li>
+                {% else %}
+                <li><a href="{% url 'login' %}" class="nav-link"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</a></li>
+                <li><a href="{% url 'register' %}" class="nav-link nav-register"><i class="fas fa-user-plus"></i> Registrarse</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- ============================================================
+    CONTENIDO PRINCIPAL - Cada pagina extiende este bloque
+    ============================================================ -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- ============================================================
+    PIE DE PAGINA - Informacion de contacto y enlaces
+    ============================================================ -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4><i class="fas fa-mountain"></i> Argentina Viajes</h4>
+                <p>Descubrí los destinos más increíbles de nuestro país. Tu próxima aventura comienza acá.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Enlaces Rápidos</h4>
+                <ul>
+                    <li><a href="{% url 'index' %}">Inicio</a></li>
+                    <li><a href="#">Términos y Condiciones</a></li>
+                    <li><a href="#">Contacto</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Seguinos</h4>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Argentina Viajes . Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- ============================================================
+    JAVASCRIPT PRINCIPAL - Animaciones, buscador, filtros, mapas
+    ============================================================ -->
+    <script src="{% static 'app/js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

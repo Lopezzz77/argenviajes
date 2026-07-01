@@ -1,0 +1,71 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}Búsqueda - Turismo Argentina{% endblock %}
+
+{% block content %}
+
+<!-- ============================================================
+     PAGINA DE RESULTADOS DE BUSQUEDA - Filtros y resultados
+     ============================================================ -->
+<section class="search-page">
+    <div class="container">
+        <h1 class="section-title">Resultados de Búsqueda</h1>
+
+        <!-- Filtros avanzados -->
+        <form action="{% url 'search' %}" method="GET" class="search-filters animate-on-scroll">
+            <div class="filter-group">
+                <input type="text" name="q" placeholder="Buscar destino..." value="{{ query }}">
+            </div>
+            <div class="filter-group">
+                <select name="region">
+                    <option value="">Todas las regiones</option>
+                    {% for r in regions %}
+                    <option value="{{ r }}" {% if selected_region == r %}selected{% endif %}>{{ r }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter-group">
+                <input type="number" name="min_price" placeholder="Precio mín." value="{{ min_price }}">
+            </div>
+            <div class="filter-group">
+                <input type="number" name="max_price" placeholder="Precio máx." value="{{ max_price }}">
+            </div>
+            <button type="submit" class="filter-submit"><i class="fas fa-filter"></i> Filtrar</button>
+        </form>
+
+        <!-- Resultados -->
+        <div class="results-count">
+            <p>{{ results|length }} destino{{ results|length|pluralize:'s' }} encontrado{{ results|length|pluralize:'s' }}</p>
+        </div>
+
+        <div class="cards-grid">
+            {% for dest in results %}
+            <a href="{% url 'destination_detail' dest.slug %}" class="province-card animate-on-scroll">
+                <div class="card-image">
+                    <img src="{{ dest.image|default:'https://source.unsplash.com/400x300/?argentina,'|add:dest.name }}" alt="{{ dest.name }}">
+                    <div class="card-overlay">
+                        <span class="card-region">{{ dest.province.name }}</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h3>{{ dest.name }}</h3>
+                    <p>{{ dest.short_description }}</p>
+                    <div class="card-meta">
+                        <span><i class="fas fa-dollar-sign"></i> ${{ dest.price_per_night|floatformat:0 }}/noche</span>
+                    </div>
+                    <span class="card-btn">Ver Detalles <i class="fas fa-arrow-right"></i></span>
+                </div>
+            </a>
+            {% empty %}
+            <div class="no-results">
+                <i class="fas fa-search"></i>
+                <h3>No se encontraron resultados</h3>
+                <p>Probá con otros términos o ajustá los filtros.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}

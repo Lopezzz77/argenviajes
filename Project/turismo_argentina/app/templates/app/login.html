@@ -1,0 +1,43 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}Iniciar Sesión - Turismo Argentina{% endblock %}
+
+{% block content %}
+
+<!-- ============================================================
+     FORMULARIO DE INICIO DE SESION - Acceso de usuarios registrados
+     ============================================================ -->
+<section class="auth-section">
+    <div class="auth-container animate-fadeIn">
+        <div class="auth-card">
+            <div class="auth-header">
+                <i class="fas fa-user-circle"></i>
+                <h2>Iniciar Sesión</h2>
+                <p>Accedé para dejar reseñas y comentarios</p>
+            </div>
+            <form method="POST" class="auth-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="id_username"><i class="fas fa-user"></i> Usuario</label>
+                    <input type="text" name="username" id="id_username" required placeholder="Ingresá tu usuario">
+                </div>
+                <div class="form-group">
+                    <label for="id_password"><i class="fas fa-lock"></i> Contraseña</label>
+                    <input type="password" name="password" id="id_password" required placeholder="Ingresá tu contraseña">
+                </div>
+                {% if form.errors %}
+                <div class="form-error">
+                    <i class="fas fa-exclamation-circle"></i> Usuario o contraseña incorrectos.
+                </div>
+                {% endif %}
+                <button type="submit" class="auth-btn">Ingresar <i class="fas fa-arrow-right"></i></button>
+            </form>
+            <p class="auth-footer">
+                ¿No tenés cuenta? <a href="{% url 'register' %}">Registrate acá</a>
+            </p>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

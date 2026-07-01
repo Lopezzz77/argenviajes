@@ -1,0 +1,50 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}{{ province.name }} - Turismo Argentina{% endblock %}
+{% block content %}
+
+<!-- ============================================================
+     ENCABEZADO DE PROVINCIA - Imagen de fondo, nombre y descripcion
+     ============================================================ -->
+<section class="page-hero" style="background-image: url('{{ province.image|default:'https://source.unsplash.com/1600x600/?argentina' }}');">
+    <div class="hero-overlay"></div>
+    <div class="page-hero-content">
+        <h1 class="animate-fadeIn">{{ province.name }}</h1>
+        <p class="animate-fadeInUp">{{ province.description }}</p>
+        <span class="region-badge">{{ province.get_region_display }}</span>
+    </div>
+</section>
+
+<!-- ============================================================
+     GRILLA DE DESTINOS TURISTICOS - Cards con los lugares para visitar
+     ============================================================ -->
+<section class="cards-section">
+    <div class="container">
+        <h2 class="section-title animate-on-scroll">Destinos Turísticos en {{ province.name }}</h2>
+        {% if destinations %}
+        <div class="cards-grid">
+            {% for dest in destinations %}
+            <a href="{% url 'destination_detail' dest.slug %}" class="province-card animate-on-scroll">
+                <div class="card-image">
+                    <img src="{{ dest.image|default:'https://source.unsplash.com/400x300/?argentina,'|add:dest.name }}" alt="{{ dest.name }}">
+                </div>
+                <div class="card-body">
+                    <h3>{{ dest.name }}</h3>
+                    <p>{{ dest.short_description }}</p>
+                    <div class="card-meta">
+                        <span><i class="fas fa-map-pin"></i> {{ dest.province.name }}</span>
+                        <span><i class="fas fa-dollar-sign"></i> Desde ${{ dest.price_per_night|floatformat:0 }}/noche</span>
+                    </div>
+                    <span class="card-btn">Ver Detalles <i class="fas fa-arrow-right"></i></span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="empty-message">No hay destinos cargados para esta provincia todavía.</p>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}
