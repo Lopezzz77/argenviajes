@@ -1,0 +1,214 @@
+/* ============================================
+   Tema Turismo - Triangulación de Ubicación
+   Colores: azul mar, celeste cielo, arena suave
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Poppins:wght@500;600;700&display=swap');
+
+:root {
+    /* Paleta turismo */
+    --arena-clara: #faf7f2;
+    --arena: #fff3de;
+    --arena-media: #e8ded0;
+    --arena-oscuro: #d4c4b0;
+    
+    --celeste-claro: #e0f7fa;
+    --celeste: #b2ebf2;
+    --celeste-medio: #7dd3fc;
+    
+    --azul-mar: #0c4a6e;
+    --azul-cielo: #075985;
+    --azul-brillante: #0284c7;
+    --azul-profundo: #082f49;
+    
+    --texto: #1e3a4c;
+    --texto-claro: #4a6b7d;
+    --blanco: #ffffff;
+    
+    --sombra: rgba(12, 74, 110, 0.12);
+    --sombra-fuerte: rgba(12, 74, 110, 0.20);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Nunito', Arial, sans-serif;
+    margin: 0;
+    padding: 30px;
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--arena-clara) 0%, var(--celeste-claro) 50%, var(--arena) 100%);
+    color: var(--texto);
+    line-height: 1.5;
+}
+
+/* Título principal */
+h2 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--azul-profundo);
+    text-align: center;
+    margin-bottom: 0.5rem;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+/* Línea separadora */
+hr {
+    border: none;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--celeste-medio), var(--azul-brillante), var(--celeste-medio), transparent);
+    margin: 1.5rem auto 2rem;
+    max-width: 600px;
+    border-radius: 999px;
+}
+
+/* Contenedor principal: formulario + mapa */
+.contenedor {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* Tarjeta del formulario */
+form {
+    width: 320px;
+    background: var(--blanco);
+    padding: 28px;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px var(--sombra);
+    border: 1px solid var(--arena-media);
+}
+
+form h3 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.25rem;
+    color: var(--azul-mar);
+    margin-top: 0;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--celeste);
+}
+
+/* Etiquetas */
+form label {
+    display: block;
+    font-weight: 600;
+    color: var(--texto);
+    margin-bottom: 6px;
+    font-size: 0.95rem;
+}
+
+/* Inputs */
+form input {
+    width: 100%;
+    padding: 12px 14px;
+    margin-bottom: 18px;
+    border: 2px solid var(--celeste);
+    border-radius: 12px;
+    background: var(--arena-clara);
+    color: var(--texto);
+    font-size: 1rem;
+    font-family: 'Nunito', sans-serif;
+    transition: all 0.3s ease;
+}
+
+form input:focus {
+    outline: none;
+    border-color: var(--azul-brillante);
+    background: var(--blanco);
+    box-shadow: 0 0 0 4px rgba(125, 211, 252, 0.25);
+}
+
+/* Botón de calcular */
+form button {
+    padding: 14px;
+    width: 100%;
+    background: linear-gradient(135deg, var(--azul-brillante) 0%, var(--azul-mar) 100%);
+    color: var(--blanco);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    box-shadow: 0 4px 16px rgba(2, 132, 199, 0.35);
+    transition: all 0.3s ease;
+}
+
+form button:hover {
+    background: linear-gradient(135deg, var(--azul-cielo) 0%, var(--azul-profundo) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(2, 132, 199, 0.45);
+}
+
+/* Contenedor del mapa y resultado */
+#datos-mapa {
+    background: var(--blanco);
+    padding: 28px;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px var(--sombra);
+    border: 1px solid var(--arena-media);
+    text-align: center;
+}
+
+/* Título del resultado detectado */
+#datos-mapa h3 {
+    font-family: 'Poppins', sans-serif;
+    margin-top: 0;
+    margin-bottom: 1.25rem;
+    font-size: 1.15rem;
+}
+
+/* Color azul mar para el resultado (en vez de rojo) */
+#datos-mapa h3[style*="color: red"],
+#datos-mapa h3 {
+    color: var(--azul-mar) !important;
+}
+
+/* Canvas del mapa */
+#mapa {
+    border: 3px solid var(--azul-mar);
+    border-radius: 16px;
+    background: var(--arena-clara);
+    box-shadow: 0 8px 24px var(--sombra);
+    max-width: 100%;
+    height: auto;
+}
+
+/* Responsive para celulares */
+@media (max-width: 768px) {
+    body {
+        padding: 18px;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    .contenedor {
+        flex-direction: column;
+        align-items: center;
+        gap: 25px;
+    }
+
+    form {
+        width: 100%;
+        max-width: 360px;
+    }
+
+    #datos-mapa {
+        width: 100%;
+        max-width: 420px;
+    }
+
+    #mapa {
+        width: 100%;
+        height: auto;
+    }
+}
