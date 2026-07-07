@@ -128,14 +128,14 @@ ul { list-style: none; }
 }
 
 .nav-logo-img {
-    width: 240px;
-    height: 390px;
+    width: 220px;
+    height: 320px;
     object-fit: contain;
     font-size: 1.4rem;
     font-weight: 700;
     color: var(--primary);
     display: flex;
-    align-items: center;
+    align-items: left;
     gap: 8px;
     transition: var(--transition);
 }
