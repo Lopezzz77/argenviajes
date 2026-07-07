@@ -5,9 +5,7 @@
 
 {% block content %}
 
-<!-- ============================================================
-     ENCABEZADO DEL DESTINO - Imagen de fondo, titulo y puntuacion
-     ============================================================ -->
+<!-- ENCABEZADO DEL DESTINO - Imagen de fondo, titulo y puntuacion 
 <section class="page-hero" style="background-image: url('{{ destination.image|default:'https://source.unsplash.com/1600x600/?argentina' }}');">
     <div class="hero-overlay"></div>
     <div class="page-hero-content">
@@ -21,7 +19,7 @@
         </div>
     </div>
 </section>
-
+ -->
 <div class="container detail-layout">
 
     <!-- ============================================================
@@ -246,7 +244,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<!-- Inicializar mapa cuando cargue la pagina -->
+<!-- Inicializar mapa cuando cargue la pagina 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         initDestinationMap();
@@ -254,4 +252,5 @@
         initStarRating();
     });
 </script>
+-->
 {% endblock %}
