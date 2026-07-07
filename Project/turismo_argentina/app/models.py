@@ -5,7 +5,7 @@ class Province(models.Model):
     name = models.CharField(max_length=100)
     capital = models.CharField(max_length=100)
     description = models.TextField()
-    image = models.URLField(blank=True, help_text="URL de imagen representativa")
+    image = models.CharField(max_length=255, blank=True, help_text="Nombre del archivo de imagen en static/app/images/")
     region = models.CharField(max_length=50, choices=[
         ('norte', 'Norte'),
         ('cuyo', 'Cuyo'),
@@ -29,7 +29,7 @@ class Destination(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField()
     short_description = models.CharField(max_length=300)
-    image = models.URLField(blank=True)
+    image = models.CharField(max_length=255, blank=True, help_text="Nombre del archivo de imagen en static/app/images/")
     images = models.JSONField(default=list, blank=True, help_text="Lista de URLs de imágenes")
     location_lat = models.FloatField(help_text="Latitud para Google Maps")
     location_lng = models.FloatField(help_text="Longitud para Google Maps")
@@ -50,7 +50,7 @@ class Hotel(models.Model):
     destination = models.ForeignKey(Destination, on_delete=models.CASCADE, related_name='hotels')
     name = models.CharField(max_length=200)
     description = models.TextField()
-    image = models.URLField(blank=True)
+    image = models.CharField(max_length=255, blank=True, help_text="Nombre del archivo de imagen en static/app/images/")
     rating = models.DecimalField(max_digits=3, decimal_places=1, default=0)
     price_per_night = models.DecimalField(max_digits=10, decimal_places=2)
     address = models.CharField(max_length=300)

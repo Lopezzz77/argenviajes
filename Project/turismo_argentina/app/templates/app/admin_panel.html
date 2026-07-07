@@ -1,0 +1,83 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% load app_extras %}
+
+{% block title %}Panel de Administración{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="section-title">Panel de Administración</h1>
+
+    <div class="detail-card" style="margin-bottom:30px">
+        <h2><i class="fas fa-map-marked-alt"></i> Provincias</h2>
+        <table class="admin-table" style="width:100%;border-collapse:collapse;margin-top:15px">
+            <thead>
+                <tr style="background:#f3f4f6;text-align:left">
+                    <th style="padding:10px">Nombre</th>
+                    <th style="padding:10px">Región</th>
+                    <th style="padding:10px">Imagen</th>
+                    <th style="padding:10px">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in provinces %}
+                <tr style="border-bottom:1px solid #e5e7eb">
+                    <td style="padding:10px">{{ p.name }}</td>
+                    <td style="padding:10px">{{ p.get_region_display }}</td>
+                    <td style="padding:10px">
+                        {% if p.image %}
+                        <img src="{{ p.image|image_url }}" alt="" style="width:60px;height:40px;object-fit:cover;border-radius:4px">
+                        {% else %}
+                        <span style="color:#9ca3af">—</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding:10px">
+                        <a href="{% url 'admin_edit_province' p.slug %}" class="auth-btn" style="padding:6px 14px;font-size:13px;display:inline-block"><i class="fas fa-edit"></i> Editar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="detail-card" style="margin-bottom:30px">
+        <h2><i class="fas fa-map-pin"></i> Destinos</h2>
+        <table class="admin-table" style="width:100%;border-collapse:collapse;margin-top:15px">
+            <thead>
+                <tr style="background:#f3f4f6;text-align:left">
+                    <th style="padding:10px">Nombre</th>
+                    <th style="padding:10px">Provincia</th>
+                    <th style="padding:10px">Precio/noche</th>
+                    <th style="padding:10px">Destacado</th>
+                    <th style="padding:10px">Imagen</th>
+                    <th style="padding:10px">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for d in destinations %}
+                <tr style="border-bottom:1px solid #e5e7eb">
+                    <td style="padding:10px">{{ d.name }}</td>
+                    <td style="padding:10px">{{ d.province.name }}</td>
+                    <td style="padding:10px">${{ d.price_per_night|floatformat:0 }}</td>
+                    <td style="padding:10px">{% if d.is_featured %}<i class="fas fa-check" style="color:#22c55e"></i>{% else %}<i class="fas fa-times" style="color:#ef4444"></i>{% endif %}</td>
+                    <td style="padding:10px">
+                        {% if d.image %}
+                        <img src="{{ d.image|image_url }}" alt="" style="width:60px;height:40px;object-fit:cover;border-radius:4px">
+                        {% else %}
+                        <span style="color:#9ca3af">—</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding:10px">
+                        <a href="{% url 'admin_edit_destination' d.slug %}" class="auth-btn" style="padding:6px 14px;font-size:13px;display:inline-block"><i class="fas fa-edit"></i> Editar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <p style="text-align:center;margin:20px 0">
+        <a href="{% url 'index' %}" style="color:#3b82f6"><i class="fas fa-arrow-left"></i> Volver al inicio</a>
+    </p>
+</div>
+{% endblock %}

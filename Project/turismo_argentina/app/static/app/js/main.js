@@ -185,51 +185,38 @@ document.addEventListener('DOMContentLoaded', function() {
         const stars = starsInput.querySelectorAll('.fa-star');
 
         stars.forEach(function(star) {
-            // Hover - resaltar estrellas
             star.addEventListener('mouseenter', function() {
                 const value = parseInt(this.getAttribute('data-value'));
                 stars.forEach(function(s) {
                     const sv = parseInt(s.getAttribute('data-value'));
-                    if (sv >= value) {
-                        s.style.color = '#fbbf24';
-                    } else {
-                        s.style.color = '#e5e7eb';
-                    }
+                    s.style.color = sv <= value ? '#fbbf24' : '#e5e7eb';
                 });
             });
 
-            // Click - seleccionar puntuacion
             star.addEventListener('click', function() {
                 const value = parseInt(this.getAttribute('data-value'));
                 ratingValue.value = value;
-
                 stars.forEach(function(s) {
                     const sv = parseInt(s.getAttribute('data-value'));
-                    if (sv >= value) {
-                        s.classList.add('active');
-                    } else {
-                        s.classList.remove('active');
-                    }
-                    s.style.color = sv >= value ? '#fbbf24' : '#e5e7eb';
+                    s.classList.toggle('active', sv <= value);
+                    s.style.color = sv <= value ? '#fbbf24' : '#e5e7eb';
                 });
             });
         });
 
-        // Restaurar al salir del contenedor
         starsInput.addEventListener('mouseleave', function() {
             const selected = parseInt(ratingValue.value);
             stars.forEach(function(s) {
                 const sv = parseInt(s.getAttribute('data-value'));
-                s.style.color = sv >= selected ? '#fbbf24' : '#e5e7eb';
+                s.style.color = sv <= selected ? '#fbbf24' : '#e5e7eb';
             });
         });
 
-        // Inicializar con valor por defecto (5)
         const defaultVal = parseInt(ratingValue.value);
         stars.forEach(function(s) {
             const sv = parseInt(s.getAttribute('data-value'));
-            if (sv >= defaultVal) s.classList.add('active');
-            s.style.color = sv >= defaultVal ? '#fbbf24' : '#e5e7eb';
+            if (sv <= defaultVal) s.classList.add('active');
+            s.style.color = sv <= defaultVal ? '#fbbf24' : '#e5e7eb';
         });
     };
 

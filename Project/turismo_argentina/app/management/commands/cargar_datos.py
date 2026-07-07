@@ -22,39 +22,39 @@ class Command(BaseCommand):
         provincias_data = [
             {"name": "Buenos Aires", "capital": "La Plata", "region": "bsas", "slug": "buenos-aires",
              "description": "La provincia más grande y poblada del país, con la vibrante ciudad de Buenos Aires, playas atlánticas y el delta del Paraná.",
-             "image": "https://images.unsplash.com/photo-1612294037637-ec328d0e075e?w=600"},
+             "image": ""},
             {"name": "Salta", "capital": "Salta", "region": "norte", "slug": "salta",
              "description": "Tierra de cerros multicolores, valles calchaquíes y la mejor arquitectura colonial del norte argentino.",
-             "image": "https://images.unsplash.com/photo-1591628001891-9adec694d502?w=600"},
+             "image": "salta.png"},
             {"name": "Mendoza", "capital": "Mendoza", "region": "cuyo", "slug": "mendoza",
              "description": "Capital del vino argentino, con el Cerro Aconcagua como telón de fondo y paisajes de montaña únicos.",
-             "image": "https://images.unsplash.com/photo-1624623278313-a930126a11c3?w=600"},
+             "image": ""},
             {"name": "Bariloche", "capital": "San Carlos de Bariloche", "region": "patagonia", "slug": "rio-negro",
              "description": "La capital de los lagos patagónicos, famosa por su chocolate, nieve y paisajes de ensueño.",
-             "image": "https://images.unsplash.com/photo-1582827501715-e8e7c163a77a?w=600"},
+             "image": "bariloche.png"},
             {"name": "Córdoba", "capital": "Córdoba", "region": "centro", "slug": "cordoba",
              "description": "Corazón geográfico del país, con sierras, ríos y una rica historia universitaria y colonial.",
-             "image": "https://images.unsplash.com/photo-1599630640671-2c69e8c7a02e?w=600"},
+             "image": ""},
             {"name": "Misiones", "capital": "Posadas", "region": "litoral", "slug": "misiones",
              "description": "Selva subtropical, las majestuosas Cataratas del Iguazú y las ruinas jesuíticas de San Ignacio.",
-             "image": "https://images.unsplash.com/photo-1593273361036-f8b44a6e40d6?w=600"},
+             "image": ""},
             {"name": "Jujuy", "capital": "San Salvador de Jujuy", "region": "norte", "slug": "jujuy",
              "description": "El Cerro de los Siete Colores, la Quebrada de Humahuaca y la cultura andina más pura del país.",
-             "image": "https://images.unsplash.com/photo-1591628001891-9adec694d502?w=600"},
+             "image": ""},
             {"name": "Neuquén", "capital": "Neuquén", "region": "patagonia", "slug": "neuquen",
              "description": "Lagunas, bosques petrificados y la cuenca del Comahue, con San Martín de los Andes como joya.",
-             "image": "https://images.unsplash.com/photo-1582827501715-e8e7c163a77a?w=600"},
+             "image": ""},
             {"name": "Santa Fe", "capital": "Santa Fe", "region": "litoral", "slug": "santa-fe",
              "description": "La costa del río Paraná, la ciudad de Rosario y una rica tradición agropecuaria.",
-             "image": "https://images.unsplash.com/photo-1599630640671-2c69e8c7a02e?w=600"},
+             "image": ""},
             {"name": "Tierra del Fuego", "capital": "Ushuaia", "region": "patagonia", "slug": "tierra-del-fuego",
              "description": "El fin del mundo: Ushuaia, el Canal Beagle, pingüinos y paisajes australes únicos.",
-             "image": "https://images.unsplash.com/photo-1582827501715-e8e7c163a77a?w=600"},
+             "image": ""},
         ]
 
         provincias = {}
         for pd in provincias_data:
-            p, created = Province.objects.get_or_create(
+            p, created = Province.objects.update_or_create(
                 slug=pd["slug"],
                 defaults=pd
             )
@@ -87,7 +87,7 @@ class Command(BaseCommand):
              "description": "Salta, conocida como 'La Linda', cautiva con su arquitectura colonial bien preservada, sus iglesias barrocas, el cerro San Bernardo y su famoso tren a las nubes. Es la puerta de entrada a los valles calchaquíes y los paisajes de altura del norte argentino.",
              "price_per_night": 55, "is_featured": True,
              "location_lat": -24.7821, "location_lng": -65.4232,
-             "image": "https://images.unsplash.com/photo-1591628001891-9adec694d502?w=600",
+             "image": "salta.png",
              "images": ["https://images.unsplash.com/photo-1591628001891-9adec694d502?w=600"],
              "how_to_get": {"micro": "Desde Retiro en 18 hs. Terminal de Salta.", "avion": "Aeropuerto Martín Miguel de Güemes (SLA).", "tren": "Tren a las Nubes (solo turístico)."}},
             # Mendoza
@@ -105,7 +105,7 @@ class Command(BaseCommand):
              "description": "Bariloche es el destino patagónico por excelencia. Rodeada de lagos cristalinos, montañas nevadas y bosques milenarios, ofrece actividades todo el año: esquí en el Cerro Catedral, navegación por el Nahuel Huapi, excursiones al Bolsón y una tradición chocolatera única.",
              "price_per_night": 95, "is_featured": True,
              "location_lat": -41.1335, "location_lng": -71.3103,
-             "image": "https://images.unsplash.com/photo-1582827501715-e8e7c163a77a?w=600",
+             "image": "bariloche.png",
              "images": ["https://images.unsplash.com/photo-1582827501715-e8e7c163a77a?w=600"],
              "how_to_get": {"micro": "Desde Retiro en 22 hs. Terminal de Bariloche.", "avion": "Aeropuerto de Bariloche (BRC).", "auto": "Ruta 237 desde Neuquén."}},
             # Córdoba
@@ -166,7 +166,7 @@ class Command(BaseCommand):
 
         destinos = {}
         for dd in destinos_data:
-            d, created = Destination.objects.get_or_create(
+            d, created = Destination.objects.update_or_create(
                 slug=dd["slug"],
                 defaults={
                     "province": provincias[dd["province"]],

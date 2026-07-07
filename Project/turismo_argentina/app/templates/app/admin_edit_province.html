@@ -1,0 +1,59 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% load app_extras %}
+
+{% block title %}Editar Provincia - {{ province.name }}{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="auth-container animate-fadeIn">
+        <div class="auth-card">
+            <div class="auth-header">
+                <i class="fas fa-map-marked-alt"></i>
+                <h2>Editar Provincia</h2>
+                <p>{{ province.name }}</p>
+            </div>
+            <form method="POST" class="auth-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Nombre</label>
+                    <input type="text" name="name" value="{{ province.name }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Capital</label>
+                    <input type="text" name="capital" value="{{ province.capital }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea name="description" rows="4" required>{{ province.description }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label>Región</label>
+                    <select name="region">
+                        <option value="norte" {% if province.region == 'norte' %}selected{% endif %}>Norte</option>
+                        <option value="cuyo" {% if province.region == 'cuyo' %}selected{% endif %}>Cuyo</option>
+                        <option value="centro" {% if province.region == 'centro' %}selected{% endif %}>Centro</option>
+                        <option value="patagonia" {% if province.region == 'patagonia' %}selected{% endif %}>Patagonia</option>
+                        <option value="litoral" {% if province.region == 'litoral' %}selected{% endif %}>Litoral</option>
+                        <option value="bsas" {% if province.region == 'bsas' %}selected{% endif %}>Buenos Aires</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Imagen (seleccionar de la carpeta images)</label>
+                    <select name="image">
+                        <option value="">— Sin imagen (usa salta.png por defecto) —</option>
+                        {% for img in available_images %}
+                        <option value="{{ img }}" {% if province.image == img %}selected{% endif %}>{{ img }}</option>
+                        {% endfor %}
+                    </select>
+                    <small class="form-help">Las imágenes disponibles están en <code>static/app/images/</code>. Para agregar más, copiá el archivo allí.</small>
+                </div>
+                <button type="submit" class="auth-btn">Guardar Cambios <i class="fas fa-save"></i></button>
+            </form>
+            <p class="auth-footer">
+                <a href="{% url 'admin_panel' %}"><i class="fas fa-arrow-left"></i> Volver al panel</a>
+            </p>
+        </div>
+    </div>
+</section>
+{% endblock %}

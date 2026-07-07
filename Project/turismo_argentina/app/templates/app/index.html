@@ -1,5 +1,6 @@
 {% extends 'app/base.html' %}
 {% load static %}
+{% load app_extras %}
 
 {% block title %}Turismo Argentina - Descubrí tu próximo destino{% endblock %}
 
@@ -40,7 +41,7 @@
             <!-- Cada card es un boton que redirige al detalle de la provincia -->
             <a href="{% url 'province_detail' province.slug %}" class="province-card" data-region="{{ province.region }}">
                 <div class="card-image">
-                    <img src="{{ province.image|default:'https://source.unsplash.com/400x300/?argentina,'|add:province.name }}" alt="{{ province.name }}">
+                    <img src="{{ province.image|image_url }}" alt="{{ province.name }}">
                     <div class="card-overlay">
                         <span class="card-region">{{ province.get_region_display }}</span>
                     </div>
@@ -64,7 +65,7 @@
         <div class="featured-grid">
             {% for dest in featured %}
             <a href="{% url 'destination_detail' dest.slug %}" class="featured-card animate-on-scroll">
-                <img src="{{ dest.image|default:'https://source.unsplash.com/600x400/?argentina,'|add:dest.name }}" alt="{{ dest.name }}">
+                <img src="{{ dest.image|image_url }}" alt="{{ dest.name }}">
                 <div class="featured-info">
                     <span class="featured-province">{{ dest.province.name }}</span>
                     <h3>{{ dest.name }}</h3>

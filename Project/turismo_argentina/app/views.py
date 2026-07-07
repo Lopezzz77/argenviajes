@@ -1,8 +1,10 @@
+import os
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
 from django.db.models import Avg, Q
+from django.conf import settings
 from .models import Province, Destination, Hotel, Review
 
 
@@ -102,6 +104,28 @@ def add_review(request, slug):
     return redirect('destination_detail', slug=slug)
 
 
+@login_required
+def edit_review(request, review_id):
+    review = get_object_or_404(Review, id=review_id, user=request.user)
+    if request.method == 'POST':
+        rating = int(request.POST.get('rating', 5))
+        comment = request.POST.get('comment', '')
+        review.rating = rating
+        review.comment = comment
+        review.save()
+        return redirect('destination_detail', slug=review.destination.slug)
+    return render(request, 'app/edit_review.html', {'review': review})
+
+
+@login_required
+def delete_review(request, review_id):
+    review = get_object_or_404(Review, id=review_id, user=request.user)
+    slug = review.destination.slug
+    if request.method == 'POST':
+        review.delete()
+    return redirect('destination_detail', slug=slug)
+
+
 # ==========================================
 # 📍 MÓDULO DE GEOLOCALIZACIÓN Y TRIANGULACIÓN
 # ==========================================
@@ -139,4 +163,85 @@ def geolocalizacion(request):
         'punto_b': PUNTO_B,
         'punto_c': PUNTO_C,
         'resultado': resultado,
+    })
+
+
+def admin_check(user):
+    return user.is_authenticated and user.is_superuser
+
+
+@user_passes_test(admin_check, login_url='/')
+def admin_panel(request):
+    provinces = Province.objects.all()
+    destinations = Destination.objects.all()
+    images_dir = settings.BASE_DIR / 'app' / 'static' / 'app' / 'images'
+    available_images = []
+    if images_dir.exists():
+        for f in sorted(images_dir.iterdir()):
+            if f.suffix.lower() in ('.png', '.jpg', '.jpeg', '.gif', '.webp'):
+                available_images.append(f.name)
+    return render(request, 'app/admin_panel.html', {
+        'provinces': provinces,
+        'destinations': destinations,
+        'available_images': available_images,
+    })
+
+
+@user_passes_test(admin_check, login_url='/')
+def admin_edit_province(request, slug):
+    province = get_object_or_404(Province, slug=slug)
+    images_dir = settings.BASE_DIR / 'app' / 'static' / 'app' / 'images'
+    available_images = []
+    if images_dir.exists():
+        for f in sorted(images_dir.iterdir()):
+            if f.suffix.lower() in ('.png', '.jpg', '.jpeg', '.gif', '.webp'):
+                available_images.append(f.name)
+    if request.method == 'POST':
+        province.name = request.POST.get('name', province.name)
+        province.capital = request.POST.get('capital', province.capital)
+        province.description = request.POST.get('description', province.description)
+        province.image = request.POST.get('image', province.image)
+        province.region = request.POST.get('region', province.region)
+        province.save()
+        return redirect('admin_panel')
+    return render(request, 'app/admin_edit_province.html', {
+        'province': province,
+        'available_images': available_images,
+    })
+
+
+@user_passes_test(admin_check, login_url='/')
+def admin_edit_destination(request, slug):
+    destination = get_object_or_404(Destination, slug=slug)
+    provinces = Province.objects.all()
+    images_dir = settings.BASE_DIR / 'app' / 'static' / 'app' / 'images'
+    available_images = []
+    if images_dir.exists():
+        for f in sorted(images_dir.iterdir()):
+            if f.suffix.lower() in ('.png', '.jpg', '.jpeg', '.gif', '.webp'):
+                available_images.append(f.name)
+    if request.method == 'POST':
+        destination.name = request.POST.get('name', destination.name)
+        destination.short_description = request.POST.get('short_description', destination.short_description)
+        destination.description = request.POST.get('description', destination.description)
+        destination.image = request.POST.get('image', destination.image)
+        destination.price_per_night = request.POST.get('price_per_night', destination.price_per_night)
+        destination.is_featured = request.POST.get('is_featured') == 'on'
+        destination.location_lat = request.POST.get('location_lat', destination.location_lat)
+        destination.location_lng = request.POST.get('location_lng', destination.location_lng)
+        destination.how_to_get = {
+            'micro': request.POST.get('how_to_get_micro', ''),
+            'avion': request.POST.get('how_to_get_avion', ''),
+            'tren': request.POST.get('how_to_get_tren', ''),
+            'auto': request.POST.get('how_to_get_auto', ''),
+        }
+        prov_slug = request.POST.get('province')
+        if prov_slug:
+            destination.province = get_object_or_404(Province, slug=prov_slug)
+        destination.save()
+        return redirect('admin_panel')
+    return render(request, 'app/admin_edit_destination.html', {
+        'destination': destination,
+        'provinces': provinces,
+        'available_images': available_images,
     })

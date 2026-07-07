@@ -1,0 +1,90 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% load app_extras %}
+
+{% block title %}Editar Destino - {{ destination.name }}{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="auth-container animate-fadeIn">
+        <div class="auth-card">
+            <div class="auth-header">
+                <i class="fas fa-map-pin"></i>
+                <h2>Editar Destino</h2>
+                <p>{{ destination.name }}</p>
+            </div>
+            <form method="POST" class="auth-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Nombre</label>
+                    <input type="text" name="name" value="{{ destination.name }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Provincia</label>
+                    <select name="province">
+                        {% for p in provinces %}
+                        <option value="{{ p.slug }}" {% if destination.province.slug == p.slug %}selected{% endif %}>{{ p.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Descripción corta</label>
+                    <input type="text" name="short_description" value="{{ destination.short_description }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea name="description" rows="5" required>{{ destination.description }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label>Precio por noche ($)</label>
+                    <input type="number" name="price_per_night" value="{{ destination.price_per_night|floatformat:0 }}" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Imagen (seleccionar de la carpeta images)</label>
+                    <select name="image">
+                        <option value="">— Sin imagen (usa salta.png por defecto) —</option>
+                        {% for img in available_images %}
+                        <option value="{{ img }}" {% if destination.image == img %}selected{% endif %}>{{ img }}</option>
+                        {% endfor %}
+                    </select>
+                    <small class="form-help">Las imágenes disponibles están en <code>static/app/images/</code>. Para agregar más, copiá el archivo allí.</small>
+                </div>
+                <div class="form-group">
+                    <label>Latitud</label>
+                    <input type="text" name="location_lat" value="{{ destination.location_lat }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Longitud</label>
+                    <input type="text" name="location_lng" value="{{ destination.location_lng }}" required>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="is_featured" {% if destination.is_featured %}checked{% endif %}>
+                        Destacado (aparece en la página principal)
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>Cómo llegar — Micro</label>
+                    <input type="text" name="how_to_get_micro" value="{{ destination.how_to_get.micro|default:'' }}">
+                </div>
+                <div class="form-group">
+                    <label>Cómo llegar — Avión</label>
+                    <input type="text" name="how_to_get_avion" value="{{ destination.how_to_get.avion|default:'' }}">
+                </div>
+                <div class="form-group">
+                    <label>Cómo llegar — Tren</label>
+                    <input type="text" name="how_to_get_tren" value="{{ destination.how_to_get.tren|default:'' }}">
+                </div>
+                <div class="form-group">
+                    <label>Cómo llegar — Auto</label>
+                    <input type="text" name="how_to_get_auto" value="{{ destination.how_to_get.auto|default:'' }}">
+                </div>
+                <button type="submit" class="auth-btn">Guardar Cambios <i class="fas fa-save"></i></button>
+            </form>
+            <p class="auth-footer">
+                <a href="{% url 'admin_panel' %}"><i class="fas fa-arrow-left"></i> Volver al panel</a>
+            </p>
+        </div>
+    </div>
+</section>
+{% endblock %}

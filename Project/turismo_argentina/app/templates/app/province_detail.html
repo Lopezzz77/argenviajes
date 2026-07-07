@@ -1,5 +1,6 @@
 {% extends 'app/base.html' %}
 {% load static %}
+{% load app_extras %}
 
 {% block title %}{{ province.name }} - Turismo Argentina{% endblock %}
 {% block content %}
@@ -7,7 +8,7 @@
 <!-- ============================================================
      ENCABEZADO DE PROVINCIA - Imagen de fondo, nombre y descripcion
      ============================================================ -->
-<section class="page-hero" style="background-image: url('{{ province.image|default:'https://source.unsplash.com/1600x600/?argentina' }}');">
+<section class="page-hero" style="background-image: url('{{ province.image|image_url }}');">
     <div class="hero-overlay"></div>
     <div class="page-hero-content">
         <h1 class="animate-fadeIn">{{ province.name }}</h1>
@@ -27,7 +28,7 @@
             {% for dest in destinations %}
             <a href="{% url 'destination_detail' dest.slug %}" class="province-card animate-on-scroll">
                 <div class="card-image">
-                    <img src="{{ dest.image|default:'https://source.unsplash.com/400x300/?argentina,'|add:dest.name }}" alt="{{ dest.name }}">
+                    <img src="{{ dest.image|image_url }}" alt="{{ dest.name }}">
                 </div>
                 <div class="card-body">
                     <h3>{{ dest.name }}</h3>

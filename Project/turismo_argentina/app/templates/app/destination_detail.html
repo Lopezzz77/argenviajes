@@ -1,5 +1,6 @@
 {% extends 'app/base.html' %}
 {% load static %}
+{% load app_extras %}
 
 {% block title %}{{ destination.name }} - Turismo Argentina{% endblock %}
 
@@ -146,7 +147,7 @@
                 {% for hotel in hotels %}
                 <div class="hotel-item">
                     <div class="hotel-image">
-                        <img src="{{ hotel.image|default:'https://source.unsplash.com/200x150/?hotel' }}" alt="{{ hotel.name }}">
+                        <img src="{{ hotel.image|image_url }}" alt="{{ hotel.name }}">
                     </div>
                     <div class="hotel-info">
                         <h3>{{ hotel.name }}</h3>
@@ -195,7 +196,7 @@
                     <div class="star-rating-select">
                         <label>Tu puntuación:</label>
                         <div class="stars-input" id="starsInput">
-                            {% for i in "54321" %}
+                            {% for i in "12345" %}
                             <i class="fas fa-star" data-value="{{ i }}"></i>
                             {% endfor %}
                         </div>
@@ -229,6 +230,19 @@
                             {% endfor %}
                         </div>
                         <span class="review-date">{{ review.created_at|date:"d/m/Y" }}</span>
+                        {% if user.is_authenticated and user == review.user %}
+                        <div class="review-actions" style="margin-left:auto;display:flex;gap:8px">
+                            <a href="{% url 'edit_review' review.id %}" class="btn btn-sm" style="padding:4px 10px;font-size:13px;background:#3b82f6;color:white;border-radius:4px;text-decoration:none">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form method="POST" action="{% url 'delete_review' review.id %}" style="display:inline" onsubmit="return confirm('¿Eliminar esta reseña?')">
+                                {% csrf_token %}
+                                <button type="submit" style="padding:4px 10px;font-size:13px;background:#ef4444;color:white;border:none;border-radius:4px;cursor:pointer">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                        {% endif %}
                     </div>
                     <p class="review-comment">{{ review.comment }}</p>
                 </div>
@@ -244,13 +258,47 @@
 {% endblock %}
 
 {% block extra_js %}
-<!-- Inicializar mapa cuando cargue la pagina 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         initDestinationMap();
         initPriceCalculator({{ destination.price_per_night|floatformat:0 }});
-        initStarRating();
+
+        var starsInput = document.getElementById('starsInput');
+        var ratingValue = document.getElementById('ratingValue');
+        if (starsInput && ratingValue) {
+            var stars = starsInput.querySelectorAll('.fa-star');
+            stars.forEach(function(star) {
+                star.addEventListener('mouseenter', function() {
+                    var value = parseInt(this.getAttribute('data-value'));
+                    stars.forEach(function(s) {
+                        var sv = parseInt(s.getAttribute('data-value'));
+                        s.style.color = sv <= value ? '#fbbf24' : '#e5e7eb';
+                    });
+                });
+                star.addEventListener('click', function() {
+                    var value = parseInt(this.getAttribute('data-value'));
+                    ratingValue.value = value;
+                    stars.forEach(function(s) {
+                        var sv = parseInt(s.getAttribute('data-value'));
+                        s.classList.toggle('active', sv <= value);
+                        s.style.color = sv <= value ? '#fbbf24' : '#e5e7eb';
+                    });
+                });
+            });
+            starsInput.addEventListener('mouseleave', function() {
+                var selected = parseInt(ratingValue.value);
+                stars.forEach(function(s) {
+                    var sv = parseInt(s.getAttribute('data-value'));
+                    s.style.color = sv <= selected ? '#fbbf24' : '#e5e7eb';
+                });
+            });
+            var defaultVal = parseInt(ratingValue.value);
+            stars.forEach(function(s) {
+                var sv = parseInt(s.getAttribute('data-value'));
+                if (sv <= defaultVal) s.classList.add('active');
+                s.style.color = sv <= defaultVal ? '#fbbf24' : '#e5e7eb';
+            });
+        }
     });
 </script>
--->
 {% endblock %}
