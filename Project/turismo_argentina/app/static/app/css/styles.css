@@ -128,8 +128,8 @@ ul { list-style: none; }
 }
 
 .nav-logo-img {
-    width: 220px;
-    height: 320px;
+    width: 150px;
+    height: 200px;
     object-fit: contain;
     font-size: 1.4rem;
     font-weight: 700;
