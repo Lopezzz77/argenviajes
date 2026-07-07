@@ -127,7 +127,10 @@ ul { list-style: none; }
     height: 70px;
 }
 
-.nav-logo {
+.nav-logo-img {
+    width: 240px;
+    height: 390px;
+    object-fit: contain;
     font-size: 1.4rem;
     font-weight: 700;
     color: var(--primary);

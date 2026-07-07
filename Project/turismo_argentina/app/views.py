@@ -100,3 +100,43 @@ def add_review(request, slug):
             comment=comment,
         )
     return redirect('destination_detail', slug=slug)
+
+
+# ==========================================
+# 📍 MÓDULO DE GEOLOCALIZACIÓN Y TRIANGULACIÓN
+# ==========================================
+
+# Coordenadas fijas de las 3 antenas de referencia
+PUNTO_A = {'x': 0, 'y': 0}
+PUNTO_B = {'x': 100, 'y': 0}
+PUNTO_C = {'x': 50, 'y': 86.6}
+
+
+@login_required
+def geolocalizacion(request):
+    resultado = None
+
+    if request.method == 'POST':
+        try:
+            distancia_a = float(request.POST.get('distancia_a', 0))
+            distancia_b = float(request.POST.get('distancia_b', 0))
+            distancia_c = float(request.POST.get('distancia_c', 0))
+        except (TypeError, ValueError):
+            distancia_a = distancia_b = distancia_c = 0
+
+        # Algoritmo de trilateración para calcular ubicación aproximada
+        x = (distancia_a ** 2 - distancia_b ** 2 + PUNTO_B['x'] ** 2) / (2 * PUNTO_B['x'])
+        y = (
+            distancia_a ** 2 - distancia_c ** 2
+            + PUNTO_C['x'] ** 2 + PUNTO_C['y'] ** 2
+            - 2 * PUNTO_C['x'] * x
+        ) / (2 * PUNTO_C['y'])
+
+        resultado = {'x': round(x, 2), 'y': round(y, 2)}
+
+    return render(request, 'app/geolocalizacion.html', {
+        'punto_a': PUNTO_A,
+        'punto_b': PUNTO_B,
+        'punto_c': PUNTO_C,
+        'resultado': resultado,
+    })

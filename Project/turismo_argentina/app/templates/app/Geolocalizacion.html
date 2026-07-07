@@ -1,0 +1,92 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}Geolocalización - Argentina Viajes{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'app/css/Geo.style.css' %}">
+
+<section class="geo-section" style="padding: 40px 20px;">
+    <h2>Módulo de Triangulación de Ubicación</h2>
+    <hr>
+
+    <div class="contenedor" style="display: flex; gap: 40px; flex-wrap: wrap;">
+        <form method="post" style="width: 300px;">
+            {% csrf_token %}
+            <h3>Ingresar Distancias:</h3>
+
+            <label>Distancia al Punto A (0, 0):</label>
+            <input type="number" step="0.01" name="distancia_a" required
+                   style="width:100%; padding:8px; margin-bottom:15px;">
+
+            <label>Distancia al Punto B (100, 0):</label>
+            <input type="number" step="0.01" name="distancia_b" required
+                   style="width:100%; padding:8px; margin-bottom:15px;">
+
+            <label>Distancia al Punto C (50, 86.6):</label>
+            <input type="number" step="0.01" name="distancia_c" required
+                   style="width:100%; padding:8px; margin-bottom:15px;">
+
+            <button type="submit"
+                    style="padding:10px; width:100%; background:#007bff; color:white; border:none; cursor:pointer;">
+                Calcular Ubicación aproximada
+            </button>
+        </form>
+
+        <div id="datos-mapa"
+             data-ax="{{ punto_a.x }}" data-ay="{{ punto_a.y }}"
+             data-bx="{{ punto_b.x }}" data-by="{{ punto_b.y }}"
+             data-cx="{{ punto_c.x }}" data-cy="{{ punto_c.y }}"
+             {% if resultado %}
+             data-rx="{{ resultado.x }}" data-ry="{{ resultado.y }}"
+             {% endif %}>
+
+            {% if resultado %}
+                <h3 style="color: red;">Ubicación Detectada -> X: {{ resultado.x }}, Y: {{ resultado.y }}</h3>
+            {% else %}
+                <h3>Esperando datos para triangular...</h3>
+            {% endif %}
+
+            <canvas id="mapa" width="400" height="400"
+                    style="border:2px solid #333; background:#fff;"></canvas>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const canvas = document.getElementById('mapa');
+    const ctx = canvas.getContext('2d');
+    const escala = 3;
+
+    const contenedorDatos = document.getElementById('datos-mapa');
+
+    const puntoA = { x: Number(contenedorDatos.dataset.ax), y: Number(contenedorDatos.dataset.ay) };
+    const puntoB = { x: Number(contenedorDatos.dataset.bx), y: Number(contenedorDatos.dataset.by) };
+    const puntoC = { x: Number(contenedorDatos.dataset.cx), y: Number(contenedorDatos.dataset.cy) };
+
+    function dibujarPunto(x, y, color, nombre) {
+        const canvasX = x * escala + 50;
+        const canvasY = 350 - (y * escala);
+
+        ctx.beginPath();
+        ctx.arc(canvasX, canvasY, 6, 0, 2 * Math.PI);
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.font = "12px Arial";
+        ctx.fillStyle = "#333";
+        ctx.fillText(nombre, canvasX + 10, canvasY + 5);
+    }
+
+    dibujarPunto(puntoA.x, puntoA.y, 'blue', 'Punto A (0,0)');
+    dibujarPunto(puntoB.x, puntoB.y, 'blue', 'Punto B (100,0)');
+    dibujarPunto(puntoC.x, puntoC.y, 'blue', 'Punto C (50,86.6)');
+
+    if (contenedorDatos.dataset.rx && contenedorDatos.dataset.ry) {
+        const resX = Number(contenedorDatos.dataset.rx);
+        const resY = Number(contenedorDatos.dataset.ry);
+        dibujarPunto(resX, resY, 'red', 'OBJETO DETECTADO');
+    }
+</script>
+{% endblock %}
